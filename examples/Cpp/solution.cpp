@@ -31,10 +31,9 @@ using namespace open3d;
 
     if(res_file.is_open()){
         for (int i = 0; i < int(connected_components.size()); i++ )
-            for(int j = 0; j<int(connected_components[i].size()); j++){
-                for(auto k: connected_components[i][j]){
+          	{
+                for(auto k: connected_components[i])
                     res_file<<k<<' ';
-                }
                 res_file<<"\n";
             }
         res_file.close();

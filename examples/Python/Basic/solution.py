@@ -10,8 +10,7 @@ connected_components = mesh.identically_colored_connected_components()
 
 res_file = open("results.txt","w")
 for row in range(len(connected_components)):
-    for col in range(len(connected_components[row])):
-        for vertex in connected_components[row][col]:
+        for vertex in connected_components[row]:
             res_file.write(str(vertex)+' ')
         res_file.write("\n")
 res_file.close()

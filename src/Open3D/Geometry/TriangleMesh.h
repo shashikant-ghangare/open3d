@@ -397,7 +397,7 @@ public:
     /// cluster indexes obtained from \ref ClusterConnectedTriangles and
     /// numbers of coloumns is equal to size of distint vertex colors
 
-    std::vector<std::vector<std::vector<int>>>
+    std::vector<std::vector<int>>
     IdenticallyColoredConnectedComponents() ;
 
     /// \brief This function removes the triangles with index in

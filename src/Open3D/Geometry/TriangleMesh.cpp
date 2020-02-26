@@ -1436,7 +1436,7 @@ TriangleMesh::ClusterConnectedTriangles() const {
     return std::make_tuple(triangle_clusters, num_triangles, areas);
 }
 
-std::vector<std::vector<std::vector<int>>>
+std::vector<std::vector<int>>
 TriangleMesh::IdenticallyColoredConnectedComponents() {
 
     std::vector<int> clusters;
@@ -1502,9 +1502,18 @@ TriangleMesh::IdenticallyColoredConnectedComponents() {
             const std::vector<int> & a, const std::vector<int> & b)
                 { return a.size() > b.size(); });
         }
+    std::vector<std::vector<int>> iccc_1d;
+
+    for (const auto &x: iccc)
+            for(const auto &y: x)
+                iccc_1d.push_back(y);
+
+    std::sort(iccc_1d.begin(), iccc_1d.end(), [](
+            const std::vector<int> & a, const std::vector<int> & b)
+                { return a.size() > b.size(); });
 
     utility::LogDebug("[IdenticallyColoredConnectedComponents] Done Computing Identically Colored Connected Components ");
-    return iccc;
+    return iccc_1d;
 }
 
 void TriangleMesh::RemoveTrianglesByIndex(

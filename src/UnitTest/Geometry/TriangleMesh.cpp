@@ -1138,8 +1138,8 @@ TEST(TriangleMesh, IdenticallyColoredConnectedComponents) {
     mesh.vertex_colors_ = {{1,0,0},{0,1,0},{0,0,1},
                         {1,0,0},{0,1,0},{1,0,0},{1,0,0}};
 
-    std::vector<std::vector<std::vector<int>>> connected_components = mesh.IdenticallyColoredConnectedComponents();
-    std::vector<std::vector<std::vector<int>>> gt_connected_components = {{{0,3,5,6},{1,4},{2}}};
+    std::vector<std::vector<int>> connected_components = mesh.IdenticallyColoredConnectedComponents();
+    std::vector<std::vector<int>> gt_connected_components = {{0,3,5,6},{1,4},{2}};
 
     EXPECT_EQ(connected_components, gt_connected_components);
 }
