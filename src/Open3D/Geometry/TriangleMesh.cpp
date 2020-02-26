@@ -1436,6 +1436,77 @@ TriangleMesh::ClusterConnectedTriangles() const {
     return std::make_tuple(triangle_clusters, num_triangles, areas);
 }
 
+std::vector<std::vector<std::vector<int>>>
+TriangleMesh::IdenticallyColoredConnectedComponents() {
+
+    std::vector<int> clusters;
+    std::vector<size_t> cluster_n_triangles;
+    std::vector<double> cluster_area;
+
+    std::tie(clusters, cluster_n_triangles, cluster_area)=
+        ClusterConnectedTriangles();
+
+    utility::LogDebug("[IdenticallyColoredConnectedComponents] Computing \
+        Identically Colored Connected Components ");
+
+    //Compute distinct triangle clusters
+    std::vector<int> unique_triangles_clusters = clusters;
+    std::vector<int>::iterator it;
+
+    it = std::unique(unique_triangles_clusters.begin(),
+        unique_triangles_clusters.end());
+    unique_triangles_clusters.resize(std::distance(
+        unique_triangles_clusters.begin(), it));
+
+    //Compute distinct vertex colors
+    std::vector<Eigen::Vector3d> unique_vertex_colors = vertex_colors_;
+
+    struct {
+    bool operator()(const Eigen::Vector3d &lhs, const Eigen::Vector3d &rhs){
+            if (lhs.x() < rhs.x()) return true;
+            if (rhs.x() < lhs.x()) return false;
+            if (lhs.y() < rhs.y()) return true;
+            if (rhs.y() < lhs.y()) return false;
+            return lhs.z() < rhs.z();
+        }
+    }color_comp;
+
+    std::sort(unique_vertex_colors.begin(), unique_vertex_colors.end(),
+        color_comp);
+    auto itr = std::unique(unique_vertex_colors.begin(),
+        unique_vertex_colors.end());
+    unique_vertex_colors.resize(std::distance(unique_vertex_colors.begin(),
+        itr));
+
+    //Create a 2D Vector of Vectors where no. of Rows = size of unique_triangles_clusters and no. of Columns = size of Unique vertex colors
+    std::vector<std::vector<std::vector<int>> > iccc(
+        unique_triangles_clusters.size(), std::vector<std::vector<int>>
+            (unique_vertex_colors.size()));
+
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static)
+#endif
+    for (int cidx = 0; cidx < int(unique_triangles_clusters.size()); cidx++){
+        for(int color_idx = 0; color_idx < int(unique_vertex_colors.size()); color_idx++){
+            for(int tidx = 0; tidx < int(triangles_.size()); tidx++){
+                for(int vidx = 0; vidx < triangles_[tidx].size(); vidx++){
+                    if (clusters[tidx] == cidx && vertex_colors_[triangles_[tidx][vidx]] == unique_vertex_colors[color_idx] && std::find(iccc[cidx][color_idx].begin(), iccc[cidx][color_idx].end(), triangles_[tidx][vidx]) == iccc[cidx][color_idx].end())
+                            iccc[cidx][color_idx].push_back(triangles_[tidx][vidx]);
+                        else
+                            continue;
+                    }
+                }
+            std::sort(iccc[cidx][color_idx].begin(), iccc[cidx][color_idx].end());
+            }
+        std::sort(iccc[cidx].begin(), iccc[cidx].end(), [](
+            const std::vector<int> & a, const std::vector<int> & b)
+                { return a.size() > b.size(); });
+        }
+
+    utility::LogDebug("[IdenticallyColoredConnectedComponents] Done Computing Identically Colored Connected Components ");
+    return iccc;
+}
+
 void TriangleMesh::RemoveTrianglesByIndex(
         const std::vector<size_t> &triangle_indices) {
     std::vector<bool> triangle_mask(triangles_.size(), false);

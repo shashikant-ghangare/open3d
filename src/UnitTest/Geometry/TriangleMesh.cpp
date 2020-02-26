@@ -1125,6 +1125,25 @@ TEST(TriangleMesh, ClusterConnectedTriangles) {
     EXPECT_EQ(cluster_area, gt_cluster_area);
 }
 
+TEST(TriangleMesh, IdenticallyColoredConnectedComponents) {
+    geometry::TriangleMesh mesh;
+    mesh.vertices_ = {
+            {0.000000, 0.000000, 0.000000}, {1.000000, 0.000000, 0.000000},
+            {0.000000, 0.000000, 1.000000}, {1.000000, 0.000000, 1.000000},
+            {0.000000, 1.000000, 0.000000}, {1.000000, 1.000000, 0.000000},
+            {0.000000, 1.000000, 1.000000}};
+    
+    mesh.triangles_ = {{0,2,3},{0,3,1},{1,3,4},{2,5,3},{3,5,6},{3,6,4}};
+
+    mesh.vertex_colors_ = {{1,0,0},{0,1,0},{0,0,1},
+                        {1,0,0},{0,1,0},{1,0,0},{1,0,0}};
+
+    std::vector<std::vector<std::vector<int>>> connected_components = mesh.IdenticallyColoredConnectedComponents();
+    std::vector<std::vector<std::vector<int>>> gt_connected_components = {{{0,3,5,6},{1,4},{2}}};
+
+    EXPECT_EQ(connected_components, gt_connected_components);
+}
+
 TEST(TriangleMesh, RemoveTrianglesByMask) {
     geometry::TriangleMesh mesh_in;
     geometry::TriangleMesh mesh_gt;

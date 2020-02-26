@@ -287,6 +287,12 @@ void pybind_trianglemesh(py::module &m) {
                  "cluster index per triangle, a second array contains the "
                  "number of triangles per cluster, and a third vector contains "
                  "the surface area per cluster.")
+            .def("identically_colored_connected_components",
+                 &geometry::TriangleMesh::IdenticallyColoredConnectedComponents,
+                 "Function that find identically-colored connected components."
+                 " An identically-colored connected component consists of spatially"
+                 "connected vertices with the same color. This function returns a 2D array that"
+                 "contains arrays of vertices of identically-colored connected component.")
             .def("remove_triangles_by_index",
                  &geometry::TriangleMesh::RemoveTrianglesByIndex,
                  "This function removes the triangles with index in "
@@ -598,6 +604,8 @@ void pybind_trianglemesh(py::module &m) {
     docstring::ClassMethodDocInject(m, "TriangleMesh", "compute_convex_hull");
     docstring::ClassMethodDocInject(m, "TriangleMesh",
                                     "cluster_connected_triangles");
+    docstring::ClassMethodDocInject(m, "TriangleMesh",
+                                    "identically_colored_connected_components");
     docstring::ClassMethodDocInject(
             m, "TriangleMesh", "remove_triangles_by_index",
             {{"triangle_indices",

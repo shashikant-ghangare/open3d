@@ -389,6 +389,17 @@ public:
     std::tuple<std::vector<int>, std::vector<size_t>, std::vector<double>>
     ClusterConnectedTriangles() const;
 
+    /// \brief Function that find identically colored connected vertices
+    /// \p i.e. spatially connected vertices with the same color
+    ///
+    /// \return a 2D vector that contains vectors of connected spatially
+    /// connected vertices with the same color where number rows is equal to size of unique
+    /// cluster indexes obtained from \ref ClusterConnectedTriangles and
+    /// numbers of coloumns is equal to size of distint vertex colors
+
+    std::vector<std::vector<std::vector<int>>>
+    IdenticallyColoredConnectedComponents() ;
+
     /// \brief This function removes the triangles with index in
     /// \p triangle_indices. Call \ref RemoveUnreferencedVertices to clean up
     /// vertices afterwards.
